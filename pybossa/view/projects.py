@@ -496,12 +496,22 @@ def clone(short_name):
                                     json.dumps(project_sanitized),
                                     json.dumps(new_project))
             return redirect_content_type(url_for('.details', short_name=new_project['short_name']))
-
+    default_data_classification = {
+        'dataClassification': 'L4 - Public Third-Party Data',
+        'valid': True
+    }
+    input_data_classification = project.info.get('input_data_classification', default_data_classification)
+    output_data_classification = project.info.get('output_data_classification', default_data_classification)
+    data_classification_options = current_app.config.get('DATA_CLASSIFICATION', [])
     return handle_content_type(dict(
         template='/projects/clone_project.html',
         action_url=url_for('project.clone', short_name=project.short_name),
         form=form,
-        project=project_sanitized
+        project=project_sanitized,
+        input_data_classification=input_data_classification,
+        output_data_classification=output_data_classification,
+        data_classification_options=data_classification_options,
+        csrf=generate_csrf()
     ))
 
 @blueprint.route('/<short_name>/tasks/taskpresentereditor', methods=['GET', 'POST'])
@@ -838,6 +848,14 @@ def update(short_name):
     project_sanitized, owner_sanitized = sanitize_project_owner(project, owner,
                                                                 current_user,
                                                                 ps)
+
+    default_data_classification = {
+        'dataClassification': 'L4 - Public Third-Party Data',
+        'valid': True
+    }
+    input_data_classification = project['info'].get('input_data_classification', default_data_classification)
+    output_data_classification = project['info'].get('output_data_classification', default_data_classification)
+    data_classification_options = current_app.config.get('DATA_CLASSIFICATION', [])
     response = dict(template='/projects/update.html',
                     form=form,
                     upload_form=upload_form,
@@ -853,7 +871,12 @@ def update(short_name):
                     pro_features=pro,
                     sync_enabled=sync_enabled,
                     private_instance=bool(data_access_levels),
-                    prodsubprods=prodsubprods)
+                    prodsubprods=prodsubprods,
+                    input_data_classification=input_data_classification,
+                    output_data_classification=output_data_classification,
+                    data_classification_options=data_classification_options,
+                    csrf=generate_csrf()
+                    )
     return handle_content_type(response)
 
 
@@ -3652,4 +3675,49 @@ def contact(short_name):
         'success': True
     }
 
+    return handle_content_type(response)
+
+@blueprint.route('/<short_name>/dataclassification', methods=['GET', 'POST'])
+def data_classification(short_name):
+    """Updates data classification"""
+    import pdb; pdb.set_trace()
+    project, owner, ps = project_by_shortname(short_name)
+    pro = pro_features()
+    ensure_authorized_to('update', project)
+
+    input_data_key = 'input_data_classification'
+    output_data_key = 'output_data_classification'
+    if request.method == 'POST':
+        try:
+            body = json.loads(request.data) or {}
+            key = 'answer_fields_configutation'
+            data = body
+            input_data = body.get(input_data_key) or {}
+            output_data = body.get(output_data_key) or {}
+            delete_stats_for_changed_fields(
+                project.id,
+                input_data,
+                project.info.get(input_data_key) or {}
+            )
+            project.info[input_data_key] = input_data
+            project.info[output_data_key] = output_data
+            project_repo.save(project)
+            auditlogger.log_event(project, current_user, 'update', 'project.' + input_data_key,
+              'N/A', project.info[input_data_key])
+            auditlogger.log_event(project, current_user, 'update', 'project.' + output_data_key,
+              'N/A', project.info[output_data_key])
+            flash(gettext('Configuration updated successfully'), 'success')
+        except Exception:
+            flash(gettext('An error occurred.'), 'error')
+    project_sanitized, owner_sanitized = sanitize_project_owner(
+        project, owner, current_user, ps)
+
+    input_data = project.info.get(input_data_key , {})
+    output_data = project.info.get(output_data_key , {})
+    response = {
+        'template': '/projects/data_classification.html',
+        input_data_key : json.dumps(input_data),
+        output_data_key : json.dumps(output_data),
+        'csrf': generate_csrf()
+    }
     return handle_content_type(response)
