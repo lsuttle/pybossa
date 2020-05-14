@@ -848,14 +848,6 @@ def update(short_name):
     project_sanitized, owner_sanitized = sanitize_project_owner(project, owner,
                                                                 current_user,
                                                                 ps)
-
-    default_data_classification = {
-        'dataClassification': 'L4 - Public Third-Party Data',
-        'valid': True
-    }
-    input_data_classification = project['info'].get('input_data_classification', default_data_classification)
-    output_data_classification = project['info'].get('output_data_classification', default_data_classification)
-    data_classification_options = current_app.config.get('DATA_CLASSIFICATION', [])
     response = dict(template='/projects/update.html',
                     form=form,
                     upload_form=upload_form,
@@ -871,11 +863,7 @@ def update(short_name):
                     pro_features=pro,
                     sync_enabled=sync_enabled,
                     private_instance=bool(data_access_levels),
-                    prodsubprods=prodsubprods,
-                    input_data_classification=input_data_classification,
-                    output_data_classification=output_data_classification,
-                    data_classification_options=data_classification_options,
-                    csrf=generate_csrf()
+                    prodsubprods=prodsubprods
                     )
     return handle_content_type(response)
 
@@ -3680,44 +3668,42 @@ def contact(short_name):
 @blueprint.route('/<short_name>/dataclassification', methods=['GET', 'POST'])
 def data_classification(short_name):
     """Updates data classification"""
-    import pdb; pdb.set_trace()
     project, owner, ps = project_by_shortname(short_name)
     pro = pro_features()
     ensure_authorized_to('update', project)
 
-    input_data_key = 'input_data_classification'
-    output_data_key = 'output_data_classification'
+    data_classification_key = 'data_classification'
+    input_data_key = 'input_data'
+    output_data_key = 'output_data'
     if request.method == 'POST':
         try:
-            body = json.loads(request.data) or {}
-            key = 'answer_fields_configutation'
-            data = body
-            input_data = body.get(input_data_key) or {}
-            output_data = body.get(output_data_key) or {}
-            delete_stats_for_changed_fields(
-                project.id,
-                input_data,
-                project.info.get(input_data_key) or {}
-            )
-            project.info[input_data_key] = input_data
-            project.info[output_data_key] = output_data
+            data = json.loads(request.data) or {}
+            input_data = data.get(input_data_key)
+            output_data = data.get(output_data_key)
+            if not (input_data and output_data):
+                raise abort(403)
+
+            project.info[data_classification_key] = {
+                input_data_key: input_data,
+                output_data_key: output_data
+            }
             project_repo.save(project)
-            auditlogger.log_event(project, current_user, 'update', 'project.' + input_data_key,
-              'N/A', project.info[input_data_key])
-            auditlogger.log_event(project, current_user, 'update', 'project.' + output_data_key,
-              'N/A', project.info[output_data_key])
-            flash(gettext('Configuration updated successfully'), 'success')
+            auditlogger.log_event(project, current_user, 'update', 'project.info.' + data_classification_key,
+              'N/A', project.info[data_classification_key])
+            flash(gettext('Data classification updated successfully'), 'success')
         except Exception:
+            current_app.logger.error("Error saving data classification. project %d, request.data %s", project.id, request.data)
             flash(gettext('An error occurred.'), 'error')
     project_sanitized, owner_sanitized = sanitize_project_owner(
         project, owner, current_user, ps)
 
-    input_data = project.info.get(input_data_key , {})
-    output_data = project.info.get(output_data_key , {})
+    input_data = project.info.get(data_classification_key, {}).get(input_data_key , '')
+    output_data = project.info.get(data_classification_key, {}).get(output_data_key , '')
+    options = current_app.config.get('DATA_CLASSIFICATION', [])
     response = {
-        'template': '/projects/data_classification.html',
-        input_data_key : json.dumps(input_data),
-        output_data_key : json.dumps(output_data),
+        'input_data' : input_data,
+        'output_data' : output_data,
+        'options': options,
         'csrf': generate_csrf()
     }
     return handle_content_type(response)
