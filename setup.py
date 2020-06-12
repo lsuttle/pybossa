@@ -18,7 +18,7 @@ requirements = [
     "Flask>=1.0.2, <1.0.3",           # was pinned to Flask==0.10.1
     "html2text>=2014.4.5, <2014.9.7",
     "itsdangerous>=0.24, <1.0",
-    "rsa>=4.0,<=4.4",
+    "rsa>=4.0, <4.5",
     "markdown>=2.4, <3.0",
     "psycopg2-binary>=2.7.5, <3.0",
     "python-dateutil>=2.2, <3.0",
