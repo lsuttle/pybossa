@@ -60,7 +60,9 @@ class ProjectAPI(APIBase):
 
 
     def _create_instance_from_request(self, data):
+        password = data.pop("password")
         inst = super(ProjectAPI, self)._create_instance_from_request(data)
+        inst.set_password(password)
         category_ids = [c.id for c in get_categories()]
         default_category = get_categories()[0]
         inst.category_id = default_category.id
