@@ -60,6 +60,8 @@ class ProjectAPI(APIBase):
 
 
     def _create_instance_from_request(self, data):
+        if 'password' not in data.keys():
+            raise BadRequest("password required")
         password = data.pop("password")
         inst = super(ProjectAPI, self)._create_instance_from_request(data)
         inst.set_password(password)

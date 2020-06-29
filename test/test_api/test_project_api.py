@@ -402,8 +402,8 @@ class TestProjectAPI(TestAPI):
             description='description',
             owner_id=1,
             long_description=u'Long Description\n================',
+            password="hello",
             info=dict(
-                passwd_hash="hello",
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public")
             ))
         data = json.dumps(data)
@@ -431,8 +431,8 @@ class TestProjectAPI(TestAPI):
             description='description2',
             owner_id=1,
             long_description=u'Long Description\n================',
+            password="hello",
             info=dict(
-                passwd_hash="hello",
                 task_presenter='taskpresenter',
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public")
             ))
@@ -456,8 +456,8 @@ class TestProjectAPI(TestAPI):
             owner_id=1,
             category_id=cat2.id,
             long_description=u'Long Description\n================',
+            password="hello",
             info=dict(
-                passwd_hash="hello",
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public")
             ))
         new_project2 = json.dumps(new_project2)
@@ -479,8 +479,8 @@ class TestProjectAPI(TestAPI):
             owner_id=1,
             category_id=5014,
             long_description=u'Long Description\n================',
+            password="hello",
             info=dict(
-                passwd_hash="hello",
                 task_presenter='taskpresenter',
                 data_classification=dict(input_data="L1 - internal", output_data="L4 - public")
             ))
@@ -502,7 +502,7 @@ class TestProjectAPI(TestAPI):
         assert err['exception_cls'] == "DBIntegrityError", err
 
         # test create with non-allowed fields should fail
-        data = dict(name='fail', short_name='fail', link='hateoas', wrong=15)
+        data = dict(name='fail', short_name='fail', link='hateoas', password="hello", wrong=15)
         res = self.app.post('/api/project?api_key=' + users[1].api_key,
                             data=data)
         err = json.loads(res.data)
@@ -650,6 +650,7 @@ class TestProjectAPI(TestAPI):
             description='',
             owner_id=1,
             long_description=u'Long Description\n================',
+            password="hello",
             info=dict(
                 passwd_hash="hello",
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public")
@@ -679,7 +680,8 @@ class TestProjectAPI(TestAPI):
         data = dict(
             name=name,
             short_name='xxxx-project',
-            long_description=u'Long Description\n================')
+            long_description=u'Long Description\n================',
+            password="hello")
 
         datajson = json.dumps(data)
         res = self.app.put('/api/project/%s?api_key=%s&search=select1' % (id_, users[1].api_key),
