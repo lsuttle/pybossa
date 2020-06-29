@@ -25,6 +25,7 @@ from helper.gig_helper import make_subadmin, make_admin
 from factories import (ProjectFactory, TaskFactory, TaskRunFactory, AnonymousTaskRunFactory, UserFactory,
                        CategoryFactory, AuditlogFactory)
 
+from pybossa.core import signer
 from pybossa.repositories import ProjectRepository
 from pybossa.repositories import TaskRepository
 from pybossa.repositories import ResultRepository
@@ -670,7 +671,6 @@ class TestProjectAPI(TestAPI):
             long_description=u'Long Description\n================',
             password="hello",
             info=dict(
-                passwd_hash="hello",
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public")
             ))
         empty_data = json.dumps(empty_data)
@@ -752,7 +752,8 @@ class TestProjectAPI(TestAPI):
 
 
     @with_context
-    def test_project_update_task_presenter(self):
+    @patch('pybossa.model.project.signer')
+    def test_project_update_task_presenter(self, hasher_mock):
         """Test API project task presenter on PUT and POST"""
         from flask import current_app
         from pybossa.core import setup_task_presenter_editor
@@ -765,6 +766,8 @@ class TestProjectAPI(TestAPI):
         make_subadmin(subadmin)
         CategoryFactory.create()
 
+        hasher_mock.generate_password_hash.return_value = "hashedpwd"
+
         name = u'XXXX Project'
         data = dict(
             name=name,
@@ -772,8 +775,8 @@ class TestProjectAPI(TestAPI):
             description='description',
             owner_id=subadmin.id,
             long_description=u'Long Description\n================',
+            password="hello",
             info=dict(
-                passwd_hash="hello",
                 task_presenter='taskpresenter',
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public")
             ))
@@ -798,7 +801,7 @@ class TestProjectAPI(TestAPI):
         assert_equal(out.short_name, u'xxxx-project'), out
         assert_equal(out.owner.name, u'user2')
         assert_equal(out.owners_ids, [subadmin.id])
-        assert_equal(out.info, {u'data_classification': {u'input_data': u'L4 - public', u'output_data': u'L4 - public'}, u'data_access': [u'L4'], u'passwd_hash': u'hello'})
+        assert_equal(out.info, {u'data_classification': {u'input_data': u'L4 - public', u'output_data': u'L4 - public'}, u'data_access': [u'L4'], u'passwd_hash': u'hashedpwd'})
         id_ = out.id
 
         # Subadmin cannot update project task presenter
@@ -820,8 +823,8 @@ class TestProjectAPI(TestAPI):
             description=u'description',
             owner_id=admin.id,
             long_description=u'Long Description\n================',
+            password=u'hello',
             info=dict(
-                passwd_hash=u'hello',
                 task_presenter=u'taskpresenter',
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public")
             ))
@@ -834,7 +837,7 @@ class TestProjectAPI(TestAPI):
         assert_equal(out.short_name, u'xxxx-project-2'), out
         assert_equal(out.owner.name, u'user1')
         assert_equal(out.owners_ids, [1])
-        assert_equal(out.info, {u'task_presenter': u'taskpresenter', u'passwd_hash': u'hello', u'data_classification': {u'input_data': u'L4 - public', u'output_data': u'L4 - public'}, u'data_access': [u'L4']})
+        assert_equal(out.info, {u'task_presenter': u'taskpresenter', u'passwd_hash': u'hashedpwd', u'data_classification': {u'input_data': u'L4 - public', u'output_data': u'L4 - public'}, u'data_access': [u'L4']})
         id_ = out.id
 
          # Admin can update project task presenter
@@ -849,7 +852,7 @@ class TestProjectAPI(TestAPI):
         assert_equal(out.short_name, 'xxxx-project-2'), out
         assert_equal(out.owner.name, 'user1')
         assert_equal(out.owners_ids, [1])
-        assert_equal(out.info, {u'task_presenter': u'new-taskpresenter', u'data_classification': {u'input_data': u'L4 - public', u'output_data': u'L4 - public'}, u'data_access': [u'L4'], u'passwd_hash': u'hello'})
+        assert_equal(out.info, {u'task_presenter': u'new-taskpresenter', u'data_classification': {u'input_data': u'L4 - public', u'output_data': u'L4 - public'}, u'data_access': [u'L4'], u'passwd_hash': u'hashedpwd'})
         assert out.id == id_, out
 
     @with_context
@@ -1307,9 +1310,8 @@ class TestProjectAPI(TestAPI):
         owner = UserFactory.create()
         category = CategoryFactory.create()
         url = '/api/project?api_key=%s' % owner.api_key
-        payload = dict(name='foo', short_name='foo', description='foo',
+        payload = dict(name='foo', short_name='foo', description='foo', password="hey",
                        info=dict(
-                           passwd_hash="hey",
                            data_classification=dict(input_data="L4 - public", output_data="L4 - public")
                         ))
         res = self.app.post(url, data=json.dumps(payload))
@@ -1456,8 +1458,8 @@ class TestProjectAPI(TestAPI):
             description='description',
             owner_id=1,
             long_description=u'Long Description\n================',
+            password="hello",
             info=dict(
-                passwd_hash="hello",
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public")
             ))
         data = json.dumps(data)
@@ -1490,8 +1492,8 @@ class TestProjectAPI(TestAPI):
             description='my-project-description',
             owner_id=1,
             long_description=u'my project\nlong description',
+            password='hello',
             info=dict(
-                passwd_hash='hello',
                 data_access=project_levels,
                 project_users=project_users,
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public")
@@ -1546,7 +1548,8 @@ class TestProjectAPI(TestAPI):
             description='my-project-description',
             owner_id=1,
             long_description=u'my project\nlong description',
-            info=dict(passwd_hash='hello', data_access=project_levels, project_users=project_users))
+            password='hello',
+            info=dict(data_access=project_levels, project_users=project_users))
         new_project = json.dumps(new_project)
 
         with patch.dict(data_access.data_access_levels, self.patch_data_access_levels):
@@ -1582,7 +1585,8 @@ class TestProjectAPI(TestAPI):
             description='my-project-description',
             owner_id=1,
             long_description=u'my project\nlong description',
-            info=dict(passwd_hash='hello', data_access=project_levels, project_users=project_users))
+            password='hello',
+            info=dict(data_access=project_levels, project_users=project_users))
         new_project = json.dumps(new_project)
 
         with patch.dict(data_access.data_access_levels, self.patch_data_access_levels):
