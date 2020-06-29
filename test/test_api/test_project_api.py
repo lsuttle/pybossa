@@ -523,24 +523,6 @@ class TestProjectAPI(TestAPI):
         assert err['exception_cls'] == "TypeError", err_msg
         assert res.status_code == 415, err_msg
 
-        # test create without password should fail
-        headers = [('Authorization', users[1].api_key)]
-        data = dict(
-            name="nopassword",
-            short_name="nopassword",
-            long_description="nopassword",
-            info=dict(
-                data_classification=dict(input_data="L4 - public", output_data="L4 - public")
-            ))
-        res = self.app.post('/api/project', headers=headers,
-                            data=json.dumps(data))
-        err = json.loads(res.data)
-        err_msg = "password required"
-        assert err['action'] == 'POST', err_msg
-        assert err['status'] == 'failed', err_msg
-        assert err['exception_cls'] == "BadRequest", err_msg
-        assert res.status_code == 400, err_msg
-        
         # test update
         data = {'name': 'My New Title', 'links': 'hateoas'}
         data = dict(
@@ -867,6 +849,7 @@ class TestProjectAPI(TestAPI):
             short_name='new',
             description='description',
             owner_id=1,
+            password="hello"
             long_description=u'Long Description\n================')
         data = json.dumps(data)
         res = self.app.post('/api/project?api_key=' + users[1].api_key,
