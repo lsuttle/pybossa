@@ -661,10 +661,10 @@ class TestProjectAPI(TestAPI):
                             data=empty_data)
         err = json.loads(res.data)
 
-        assert res.status_code == 415, err
+        assert res.status_code == 400, err
         assert err['status'] == 'failed', err
         assert err['action'] == 'POST', err
-        assert err['exception_cls'] == 'DBIntegrityError', err
+        assert err['exception_cls'] == 'BadRequest', err
 
         # With not JSON data
         datajson = {'foo': 'bar'}
@@ -1499,10 +1499,18 @@ class TestProjectAPI(TestAPI):
 
             new_project_levels = ["L3"]
             new_project_users = [users[1].id]
-            data = dict(info=dict(
-                project_users=new_project_users,
-                data_classification=dict(input_data="L3 - community", output_data="L4 - public")
-            ))
+            data = dict(
+                name=name,
+                short_name='my-project',
+                description='my-project-description',
+                owner_id=1,
+                long_description=u'my project\nlong description',
+                password='hello',
+                info=dict(
+                    project_users=new_project_users,
+                    data_classification=dict(input_data="L3 - community", output_data="L4 - public")
+                    )
+                )
             new_data = json.dumps(data)
             res = self.app.put('/api/project/%s' % project_id, headers=headers, data=new_data)
             assert res.status_code == 200, 'project access levels should have been set'
@@ -1649,7 +1657,7 @@ class TestProjectAPI(TestAPI):
         make_subadmin(users[1])
         cat1 = CategoryFactory.create()
         cat2 = CategoryFactory.create()
-        
+
         # test create without password should fail
         headers = [('Authorization', users[1].api_key)]
         data = dict(

@@ -60,6 +60,7 @@ class ProjectRepository(Repository):
         self._creator_is_owner(project)
         self._verify_has_password(project)
         self._verify_data_classification(project)
+        self._verify_required_fields(project)
 
         try:
             self.db.session.add(project)
@@ -180,6 +181,14 @@ class ProjectRepository(Repository):
         if data_access:
             project.info['data_access'] = [data_access]
 
+    @staticmethod
+    def _verify_required_fields(project):
+        if not project.name:
+            raise BadRequest("Project must have name")
+        if not project.short_name:
+            raise BadRequest("Project must have short_name")
+        if not project.description:
+            raise BadRequest("Project must have description")
 
     def _validate_can_be(self, action, element, klass=Project):
         if not isinstance(element, klass):
