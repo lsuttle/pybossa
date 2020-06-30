@@ -232,7 +232,7 @@ class TestProjectRepositoryForProjects(Test):
         project = ProjectFactory.create()
         project.name = None
 
-        assert_raises(BadRequest, self.project_repo.update, project)
+        assert_raises(DBIntegrityError, self.project_repo.update, project)
 
 
     @with_context
