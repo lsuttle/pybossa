@@ -61,7 +61,6 @@ class ProjectRepository(Repository):
         self._verify_has_password(project)
         self._verify_data_classification(project)
         self._verify_required_fields(project)
-
         try:
             self.db.session.add(project)
             self.db.session.commit()
@@ -75,6 +74,7 @@ class ProjectRepository(Repository):
         self._creator_is_owner(project)
         self._verify_has_password(project)
         self._verify_data_classification(project)
+        self._verify_required_fields(project)
         try:
             self.db.session.merge(project)
             self.db.session.commit()
@@ -184,11 +184,11 @@ class ProjectRepository(Repository):
     @staticmethod
     def _verify_required_fields(project):
         if not project.name:
-            raise BadRequest("Project must have name")
+            raise BadRequest("Name required")
         if not project.short_name:
-            raise BadRequest("Project must have short_name")
+            raise BadRequest("Short_name required")
         if not project.description:
-            raise BadRequest("Project must have description")
+            raise BadRequest("Description required")
 
     def _validate_can_be(self, action, element, klass=Project):
         if not isinstance(element, klass):

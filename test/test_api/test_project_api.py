@@ -619,10 +619,10 @@ class TestProjectAPI(TestAPI):
         res = self.app.put('/api/project/%s?api_key=%s' % (id_, users[1].api_key),
                            data=datajson)
         err = json.loads(res.data)
-        assert res.status_code == 415, err
+        assert res.status_code == 400, err
         assert err['status'] == 'failed', err
         assert err['action'] == 'PUT', err
-        assert err['exception_cls'] == 'DBIntegrityError', err
+        assert err['exception_cls'] == 'BadRequest', err
 
         data['name'] = ''
         datajson = json.dumps(data)
@@ -1503,14 +1503,10 @@ class TestProjectAPI(TestAPI):
                 name=name,
                 short_name='my-project',
                 description='my-project-description',
-                owner_id=1,
-                long_description=u'my project\nlong description',
-                password='hello',
                 info=dict(
-                    project_users=new_project_users,
-                    data_classification=dict(input_data="L3 - community", output_data="L4 - public")
-                    )
-                )
+                project_users=new_project_users,
+                data_classification=dict(input_data="L3 - community", output_data="L4 - public")
+            ))
             new_data = json.dumps(data)
             res = self.app.put('/api/project/%s' % project_id, headers=headers, data=new_data)
             assert res.status_code == 200, 'project access levels should have been set'
