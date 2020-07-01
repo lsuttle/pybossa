@@ -195,7 +195,20 @@ class TestProjectRepositoryForProjects(Test):
         """Test save raises a BadRequest if the instance to be saved lacks
         a required value"""
 
+        # missing name
         project = ProjectFactory.build(name=None)
+        project.set_password('hello')
+
+        assert_raises(BadRequest, self.project_repo.save, project)
+
+        # missing short_name
+        project = ProjectFactory.build(name="exists", short_name=None)
+        project.set_password('hello')
+
+        assert_raises(BadRequest, self.project_repo.save, project)
+
+        # missing description
+        project = ProjectFactory.build(name="exists", short_name="exists", description=None)
         project.set_password('hello')
 
         assert_raises(BadRequest, self.project_repo.save, project)
