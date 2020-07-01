@@ -74,7 +74,7 @@ class ProjectRepository(Repository):
         self._creator_is_owner(project)
         self._verify_has_password(project)
         self._verify_data_classification(project)
-        # self._verify_required_fields(project)
+        self._verify_required_fields(project)
         try:
             self.db.session.merge(project)
             self.db.session.commit()
