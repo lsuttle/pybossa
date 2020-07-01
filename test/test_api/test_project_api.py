@@ -17,7 +17,7 @@
 # along with PYBOSSA.  If not, see <http://www.gnu.org/licenses/>.
 import json
 from mock import patch, call, MagicMock
-from default import db, with_context
+from default import db, with_context, with_context_settings
 from nose.tools import assert_equal, assert_raises
 from test_api import TestAPI
 from helper.gig_helper import make_subadmin, make_admin
@@ -389,7 +389,7 @@ class TestProjectAPI(TestAPI):
         assert len(data) == 1, len(data)
 
 
-    @with_context
+    @with_context_settings(LIMIT=3000)
     def test_project_post(self):
         """Test API project creation and auth"""
         users = UserFactory.create_batch(2)
