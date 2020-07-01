@@ -619,20 +619,20 @@ class TestProjectAPI(TestAPI):
         res = self.app.put('/api/project/%s?api_key=%s' % (id_, users[1].api_key),
                            data=datajson)
         err = json.loads(res.data)
-        assert res.status_code == 400, err
+        assert res.status_code == 415, err
         assert err['status'] == 'failed', err
         assert err['action'] == 'PUT', err
-        assert err['exception_cls'] == 'BadRequest', err
+        assert err['exception_cls'] == 'DBIntegrityError', err
 
         data['name'] = ''
         datajson = json.dumps(data)
         res = self.app.put('/api/project/%s?api_key=%s' % (id_, users[1].api_key),
                            data=datajson)
         err = json.loads(res.data)
-        assert res.status_code == 400, err
+        assert res.status_code == 415, err
         assert err['status'] == 'failed', err
         assert err['action'] == 'PUT', err
-        assert err['exception_cls'] == 'BadRequest', err
+        assert err['exception_cls'] == 'DBIntegrityError', err
 
         data['name'] = 'something'
         data['short_name'] = ''

@@ -225,14 +225,14 @@ class TestProjectRepositoryForProjects(Test):
 
 
     @with_context
-    def test_update_fails_if_bad_request(self):
-        """Test update raises a BadRequest if the instance to be updated
+    def test_update_fails_if_integrity_error(self):
+        """Test update raises a DBIntegrityError if the instance to be updated
         lacks a required value"""
 
         project = ProjectFactory.create()
         project.name = None
 
-        assert_raises(BadRequest, self.project_repo.update, project)
+        assert_raises(DBIntegrityError, self.project_repo.update, project)
 
 
     @with_context
