@@ -17,7 +17,7 @@
 # along with PYBOSSA.  If not, see <http://www.gnu.org/licenses/>.
 import json
 from mock import patch, call, MagicMock
-from default import db, with_context, with_context_settings
+from default import db, with_context, with_context_settings, flask_app
 from nose.tools import assert_equal, assert_raises
 from test_api import TestAPI
 from helper.gig_helper import make_subadmin, make_admin
@@ -388,8 +388,7 @@ class TestProjectAPI(TestAPI):
         data = json.loads(res.data)
         assert len(data) == 1, len(data)
 
-
-    @with_context_settings(LIMIT=3000, PER=3000)
+    @with_context
     def test_project_post(self):
         """Test API project creation and auth"""
         users = UserFactory.create_batch(2)
@@ -692,7 +691,50 @@ class TestProjectAPI(TestAPI):
         assert err['action'] == 'PUT', err
         assert err['exception_cls'] == 'AttributeError', err
 
+    @with_context
+    def test_delete(self):
+        """Test API project deletion and auth"""
+        users = UserFactory.create_batch(2)
+        make_subadmin(users[1])
+        non_owner = UserFactory.create()
+
+        cat1 = CategoryFactory.create()
+        cat2 = CategoryFactory.create()
+        
+        # create project
+        headers = [('Authorization', users[1].api_key)]
+        name='XXXX Project2'
+        new_project = dict(
+            name=name,
+            short_name='xxxx-project2',
+            description='description2',
+            owner_id=1,
+            long_description=u'Long Description\n================',
+            password="hello",
+            info=dict(
+                task_presenter='taskpresenter',
+                data_classification=dict(input_data="L4 - public", output_data="L4 - public")
+            ))
+        new_project = json.dumps(new_project)
+
+        res = self.app.post('/api/project', headers=headers,
+                            data=new_project)
+        out = project_repo.get_by(name=name)
+        assert out, out
+        assert_equal(out.short_name, 'xxxx-project2'), out
+        assert_equal(out.owner.name, 'user2')
+        # Test that a default category is assigned to the project
+        assert cat1.id == out.category_id, "No category assigned to project"
+        id_ = out.id
+
         # test delete
+        data = dict(
+            name=name,
+            short_name='xxxx-project',
+            long_description=u'Long Description\n================',
+            password="hello")
+
+        datajson = json.dumps(data)
         ## anonymous
         res = self.app.delete('/api/project/%s' % id_, data=data)
         error_msg = 'Anonymous should not be allowed to delete'
