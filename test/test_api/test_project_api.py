@@ -389,7 +389,7 @@ class TestProjectAPI(TestAPI):
         assert len(data) == 1, len(data)
 
 
-    @with_context_settings(LIMIT=3000)
+    @with_context_settings(LIMIT=3000, PER=3000)
     def test_project_post(self):
         """Test API project creation and auth"""
         users = UserFactory.create_batch(2)
