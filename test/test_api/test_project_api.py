@@ -502,7 +502,7 @@ class TestProjectAPI(TestAPI):
         assert err['exception_cls'] == "DBIntegrityError", err
 
         # test create with non-allowed fields should fail
-        data = dict(name='fail', short_name='fail', link='hateoas', password="hello", wrong=15)
+        data = dict(name='fail', short_name='fail', description="test", link='hateoas', password="hello", wrong=15)
         res = self.app.post('/api/project?api_key=' + users[1].api_key,
                             data=data)
         err = json.loads(res.data)
@@ -1714,4 +1714,46 @@ class TestProjectAPI(TestAPI):
         assert err['status'] == 'failed', err_msg
         assert err['exception_cls'] == "BadRequest", err_msg
         assert res.status_code == 400, err_msg
+
+        # test create without description and long description should fail
+        headers = [('Authorization', users[1].api_key)]
+        data = dict(
+            name="nopassword",
+            short_name="nopassword",
+            password="exists",
+            info=dict(
+                data_classification=dict(input_data="L4 - public", output_data="L4 - public")
+            ))
+        res = self.app.post('/api/project', headers=headers,
+                            data=json.dumps(data))
+        err = json.loads(res.data)
+        err_msg = "description or long description required"
+        assert err['action'] == 'POST', err_msg
+        assert err['status'] == 'failed', err_msg
+        assert err['exception_cls'] == "BadRequest", err_msg
+        assert res.status_code == 400, err_msg
+
+        # test create without desc should populate from long_desc
+        headers = [('Authorization', users[1].api_key)]
+        data = dict(
+            name="longdesctest",
+            short_name="longdesctest",
+            long_description="<HTMLTAG>" + ("a" * 300),
+            password="exists",
+            info=dict(
+                data_classification=dict(input_data="L4 - public", output_data="L4 - public")
+            ))
+        res = self.app.post('/api/project', headers=headers,
+                            data=json.dumps(data))
+        res_data = json.loads(res.data)
+        assert res.status_code == 200
+        print(res_data["description"])
+        # password is removed
+        assert "password" not in res_data
+        # check description was formatted
+        assert len(res_data["description"]) == 255
+        assert res_data["description"][-3:] == "..."
+        assert res_data["description"].startswith("a")
+
+        
 
