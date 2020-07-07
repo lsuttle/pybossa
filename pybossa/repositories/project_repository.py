@@ -187,6 +187,11 @@ class ProjectRepository(Repository):
             raise BadRequest("Short_name required")
         if not project.description:
             raise BadRequest("Description required")
+        kpi = project.info.get("kpi")
+        if kpi is None:
+            raise BadRequest("KPI required")
+        if not isinstance(kpi, (float, int)) or kpi > 120 or kpi < 0.1:
+            raise BadRequest("KPI must be integer between 0.1 and 120")
 
     def _validate_can_be(self, action, element, klass=Project):
         if not isinstance(element, klass):

@@ -80,13 +80,15 @@ class TestProjectAPI(TestAPI):
             info={
                 'total': 150,
                 'task_presenter': 'foo',
-                'data_classification': dict(input_data="L4 - public", output_data="L4 - public")
+                'data_classification': dict(input_data="L4 - public", output_data="L4 - public"),
+                'kpi': 0.5
             })
         projects = ProjectFactory.create_batch(8,
             info={
                 'total': 150,
                 'task_presenter': 'foo',
-                'data_classification': dict(input_data="L4 - public", output_data="L4 - public")
+                'data_classification': dict(input_data="L4 - public", output_data="L4 - public"),
+                'kpi': 0.5
             })
 
         project2 = ProjectFactory.create(
@@ -94,7 +96,8 @@ class TestProjectAPI(TestAPI):
             info={
                 'total': 150,
                 'task_presenter': 'foo',
-                'data_classification': dict(input_data="L4 - public", output_data="L4 - public")
+                'data_classification': dict(input_data="L4 - public", output_data="L4 - public"),
+                'kpi': 0.5
             })
         user = UserFactory.create()
 
@@ -204,7 +207,8 @@ class TestProjectAPI(TestAPI):
             owner=user,
             info={
                 'total': 150,
-                'data_classification': dict(input_data="L4 - public", output_data="L4 - public")
+                'data_classification': dict(input_data="L4 - public", output_data="L4 - public"),
+                'kpi': 0.5
             })
         ProjectFactory.create()
         res = self.app.get('/api/project?api_key=' + user.api_key)
@@ -316,6 +320,7 @@ class TestProjectAPI(TestAPI):
                                            name='My New Project',
                                            info=dict(
                                                foo='fox',
+                                               kpi=0.5,
                                                data_classification=dict(input_data="L4 - public", output_data="L4 - public")
                                             ))
         ProjectFactory.create()
@@ -404,7 +409,8 @@ class TestProjectAPI(TestAPI):
             long_description=u'Long Description\n================',
             password="hello",
             info=dict(
-                data_classification=dict(input_data="L4 - public", output_data="L4 - public")
+                data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
+                kpi=0.5
             ))
         data = json.dumps(data)
         # no api-key
@@ -434,7 +440,8 @@ class TestProjectAPI(TestAPI):
             password="hello",
             info=dict(
                 task_presenter='taskpresenter',
-                data_classification=dict(input_data="L4 - public", output_data="L4 - public")
+                data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
+                kpi=0.5
             ))
         new_project = json.dumps(new_project)
         res = self.app.post('/api/project', headers=headers,
@@ -458,7 +465,8 @@ class TestProjectAPI(TestAPI):
             long_description=u'Long Description\n================',
             password="hello",
             info=dict(
-                data_classification=dict(input_data="L4 - public", output_data="L4 - public")
+                data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
+                kpi=0.5
             ))
         new_project2 = json.dumps(new_project2)
         res = self.app.post('/api/project', headers=headers,
@@ -482,7 +490,8 @@ class TestProjectAPI(TestAPI):
             password="hello",
             info=dict(
                 task_presenter='taskpresenter',
-                data_classification=dict(input_data="L1 - internal", output_data="L4 - public")
+                data_classification=dict(input_data="L1 - internal", output_data="L4 - public"),
+                kpi=0.5
             ))
         new_project3 = json.dumps(new_project3)
         res = self.app.post('/api/project', headers=headers,
@@ -527,7 +536,7 @@ class TestProjectAPI(TestAPI):
         data = dict(
             name='My New Title',
             links='hateoas',
-            info=dict(data_classification=dict(input_data="L4 - public", output_data="L4 - public"))
+            info=dict(data_classification=dict(input_data="L4 - public", output_data="L4 - public"), kpi=0.5)
         )
         datajson = json.dumps(data)
         ## anonymous
@@ -652,7 +661,8 @@ class TestProjectAPI(TestAPI):
             long_description=u'Long Description\n================',
             password="hello",
             info=dict(
-                data_classification=dict(input_data="L4 - public", output_data="L4 - public")
+                data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
+                kpi=0.5
             ))
         empty_data = json.dumps(empty_data)
 
@@ -713,7 +723,8 @@ class TestProjectAPI(TestAPI):
             password="hello",
             info=dict(
                 task_presenter='taskpresenter',
-                data_classification=dict(input_data="L4 - public", output_data="L4 - public")
+                data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
+                kpi=0.5
             ))
         new_project = json.dumps(new_project)
 
@@ -803,7 +814,8 @@ class TestProjectAPI(TestAPI):
             password="hello",
             info=dict(
                 task_presenter='taskpresenter',
-                data_classification=dict(input_data="L4 - public", output_data="L4 - public")
+                data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
+                kpi=0.5
             ))
         newdata = json.dumps(data)
 
@@ -826,7 +838,7 @@ class TestProjectAPI(TestAPI):
         assert_equal(out.short_name, u'xxxx-project'), out
         assert_equal(out.owner.name, u'user2')
         assert_equal(out.owners_ids, [subadmin.id])
-        assert_equal(out.info, {u'data_classification': {u'input_data': u'L4 - public', u'output_data': u'L4 - public'}, u'data_access': [u'L4'], u'passwd_hash': u'hashedpwd'})
+        assert_equal(out.info, {u'data_classification': {u'input_data': u'L4 - public', u'output_data': u'L4 - public'}, u'data_access': [u'L4'], u'passwd_hash': u'hashedpwd', u'kpi': 0.5})
         id_ = out.id
 
         # Subadmin cannot update project task presenter
@@ -851,7 +863,8 @@ class TestProjectAPI(TestAPI):
             password=u'hello',
             info=dict(
                 task_presenter=u'taskpresenter',
-                data_classification=dict(input_data="L4 - public", output_data="L4 - public")
+                data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
+                kpi=0.5
             ))
 
         newdata = json.dumps(data)
@@ -862,7 +875,7 @@ class TestProjectAPI(TestAPI):
         assert_equal(out.short_name, u'xxxx-project-2'), out
         assert_equal(out.owner.name, u'user1')
         assert_equal(out.owners_ids, [1])
-        assert_equal(out.info, {u'task_presenter': u'taskpresenter', u'passwd_hash': u'hashedpwd', u'data_classification': {u'input_data': u'L4 - public', u'output_data': u'L4 - public'}, u'data_access': [u'L4']})
+        assert_equal(out.info, {u'kpi': 0.5, u'task_presenter': u'taskpresenter', u'passwd_hash': u'hashedpwd', u'data_classification': {u'input_data': u'L4 - public', u'output_data': u'L4 - public'}, u'data_access': [u'L4']})
         id_ = out.id
 
          # Admin can update project task presenter
@@ -877,7 +890,7 @@ class TestProjectAPI(TestAPI):
         assert_equal(out.short_name, 'xxxx-project-2'), out
         assert_equal(out.owner.name, 'user1')
         assert_equal(out.owners_ids, [1])
-        assert_equal(out.info, {u'task_presenter': u'new-taskpresenter', u'data_classification': {u'input_data': u'L4 - public', u'output_data': u'L4 - public'}, u'data_access': [u'L4'], u'passwd_hash': u'hashedpwd'})
+        assert_equal(out.info, {u'kpi': 0.5, u'task_presenter': u'new-taskpresenter', u'data_classification': {u'input_data': u'L4 - public', u'output_data': u'L4 - public'}, u'data_access': [u'L4'], u'passwd_hash': u'hashedpwd'})
         assert out.id == id_, out
 
     @with_context
@@ -1338,7 +1351,8 @@ class TestProjectAPI(TestAPI):
         url = '/api/project?api_key=%s' % owner.api_key
         payload = dict(name='foo', short_name='foo', description='foo', password="hey",
                        info=dict(
-                           data_classification=dict(input_data="L4 - public", output_data="L4 - public")
+                           data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
+                           kpi=0.5
                         ))
         res = self.app.post(url, data=json.dumps(payload))
         project_id = json.loads(res.data)['id']
@@ -1486,7 +1500,8 @@ class TestProjectAPI(TestAPI):
             long_description=u'Long Description\n================',
             password="hello",
             info=dict(
-                data_classification=dict(input_data="L4 - public", output_data="L4 - public")
+                data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
+                kpi=0.5
             ))
         data = json.dumps(data)
 
@@ -1522,7 +1537,8 @@ class TestProjectAPI(TestAPI):
             info=dict(
                 data_access=project_levels,
                 project_users=project_users,
-                data_classification=dict(input_data="L4 - public", output_data="L4 - public")
+                data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
+                kpi=0.5
                 ))
         new_project = json.dumps(new_project)
 
@@ -1648,7 +1664,10 @@ class TestProjectAPI(TestAPI):
         # project = ProjectFactory.create(owner=owner, info=dict(data_access=["L1", "L2"]))
         project = ProjectFactory.create(
             owner=owner,
-            info=dict(data_classification=dict(input_data="L3 - community", output_data="L3 - community")
+            info=dict(
+                data_classification=dict(input_data="L3 - community", output_data="L3 - community"), 
+                kpi=0.5
+
         ))
 
         self.set_proj_passwd_cookie(project, user_l3)
@@ -1741,19 +1760,41 @@ class TestProjectAPI(TestAPI):
             long_description="<HTMLTAG>" + ("a" * 300),
             password="exists",
             info=dict(
-                data_classification=dict(input_data="L4 - public", output_data="L4 - public")
+                data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
+                kpi=1
             ))
         res = self.app.post('/api/project', headers=headers,
                             data=json.dumps(data))
         res_data = json.loads(res.data)
         assert res.status_code == 200
-        print(res_data["description"])
+        print(res_data)
         # password is removed
         assert "password" not in res_data
         # check description was formatted
         assert len(res_data["description"]) == 255
         assert res_data["description"][-3:] == "..."
         assert res_data["description"].startswith("a")
+
+        # test create kpi out of range
+        headers = [('Authorization', users[1].api_key)]
+        data = dict(
+            name="kpitest",
+            short_name="kpitest",
+            long_description="kpitest",
+            password="exists",
+            info=dict(
+                data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
+                kpi=121
+            ))
+        res = self.app.post('/api/project', headers=headers,
+                            data=json.dumps(data))
+        err = json.loads(res.data)
+        err_msg = "KPI must be integer between 0.1 and 120"
+        assert err['action'] == 'POST', err_msg
+        assert err['status'] == 'failed', err_msg
+        assert err['exception_cls'] == "BadRequest", err_msg
+        assert res.status_code == 400, err_msg
+
 
         
 
