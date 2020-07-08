@@ -81,16 +81,16 @@ class TestProjectAPI(TestAPI):
                 'total': 150,
                 'task_presenter': 'foo',
                 'data_classification': dict(input_data="L4 - public", output_data="L4 - public"),
-                'product': 'exists',
-                'subproduct': 'exists'
+                'product': 'abc',
+                'subproduct': 'def'
             })
         projects = ProjectFactory.create_batch(8,
             info={
                 'total': 150,
                 'task_presenter': 'foo',
                 'data_classification': dict(input_data="L4 - public", output_data="L4 - public"),
-                'product': 'exists',
-                'subproduct': 'exists'
+                'product': 'abc',
+                'subproduct': 'def'
             })
 
         project2 = ProjectFactory.create(
@@ -99,8 +99,8 @@ class TestProjectAPI(TestAPI):
                 'total': 150,
                 'task_presenter': 'foo',
                 'data_classification': dict(input_data="L4 - public", output_data="L4 - public"),
-                'product': 'exists',
-                'subproduct': 'exists'
+                'product': 'abc',
+                'subproduct': 'def'
             })
         user = UserFactory.create()
 
@@ -412,8 +412,8 @@ class TestProjectAPI(TestAPI):
             info=dict(
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
                 kpi=0.5,
-                product="exists",
-                subproduct="exists",
+                product="abc",
+                subproduct="def",
             ))
         data = json.dumps(data)
         # no api-key
@@ -445,8 +445,8 @@ class TestProjectAPI(TestAPI):
                 task_presenter='taskpresenter',
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
                 kpi=0.5,
-                product="exists",
-                subproduct="exists",
+                product="abc",
+                subproduct="def",
             ))
         new_project = json.dumps(new_project)
         res = self.app.post('/api/project', headers=headers,
@@ -472,8 +472,8 @@ class TestProjectAPI(TestAPI):
             info=dict(
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
                 kpi=0.5,
-                product="exists",
-                subproduct="exists",
+                product="abc",
+                subproduct="def",
             ))
         new_project2 = json.dumps(new_project2)
         res = self.app.post('/api/project', headers=headers,
@@ -499,8 +499,8 @@ class TestProjectAPI(TestAPI):
                 task_presenter='taskpresenter',
                 data_classification=dict(input_data="L1 - internal", output_data="L4 - public"),
                 kpi=0.5,
-                product="exists",
-                subproduct="exists",
+                product="abc",
+                subproduct="def",
             ))
         new_project3 = json.dumps(new_project3)
         res = self.app.post('/api/project', headers=headers,
@@ -734,8 +734,8 @@ class TestProjectAPI(TestAPI):
                 task_presenter='taskpresenter',
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
                 kpi=0.5,
-                product="exists",
-                subproduct="exists",
+                product="abc",
+                subproduct="def",
             ))
         new_project = json.dumps(new_project)
 
@@ -827,8 +827,8 @@ class TestProjectAPI(TestAPI):
                 task_presenter='taskpresenter',
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
                 kpi=0.5,
-                product="exists",
-                subproduct="exists",
+                product="abc",
+                subproduct="def",
             ))
         newdata = json.dumps(data)
 
@@ -856,8 +856,8 @@ class TestProjectAPI(TestAPI):
             u'data_access': [u'L4'], 
             u'passwd_hash': u'hashedpwd', 
             u'kpi': 0.5,
-            u'product': u'exists',
-            u'subproduct': u'exists',
+            u'product': u'abc',
+            u'subproduct': u'def',
             })
         id_ = out.id
 
@@ -885,8 +885,8 @@ class TestProjectAPI(TestAPI):
                 task_presenter=u'taskpresenter',
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
                 kpi=0.5,
-                product="exists",
-                subproduct="exists",
+                product="abc",
+                subproduct="def",
             ))
 
         newdata = json.dumps(data)
@@ -903,8 +903,8 @@ class TestProjectAPI(TestAPI):
             u'passwd_hash': u'hashedpwd', 
             u'data_classification': {u'input_data': u'L4 - public', u'output_data': u'L4 - public'}, 
             u'data_access': [u'L4'],
-            u'product': u'exists',
-            u'subproduct': u'exists',
+            u'product': u'abc',
+            u'subproduct': u'def',
             })
         id_ = out.id
 
@@ -926,8 +926,8 @@ class TestProjectAPI(TestAPI):
             u'data_classification': {u'input_data': u'L4 - public', u'output_data': u'L4 - public'}, 
             u'data_access': [u'L4'], 
             u'passwd_hash': u'hashedpwd',
-            u'product': u'exists',
-            u'subproduct': u'exists',
+            u'product': u'abc',
+            u'subproduct': u'def',
             })
         assert out.id == id_, out
 
@@ -1391,8 +1391,8 @@ class TestProjectAPI(TestAPI):
                        info=dict(
                            data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
                            kpi=0.5,
-                           product="exists",
-                           subproduct="exists",
+                           product="abc",
+                           subproduct="def",
                         ))
         res = self.app.post(url, data=json.dumps(payload))
         project_id = json.loads(res.data)['id']
@@ -1542,8 +1542,8 @@ class TestProjectAPI(TestAPI):
             info=dict(
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
                 kpi=0.5,
-                product="exists",
-                subproduct="exists",
+                product="abc",
+                subproduct="def",
             ))
         data = json.dumps(data)
 
@@ -1581,8 +1581,8 @@ class TestProjectAPI(TestAPI):
                 project_users=project_users,
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
                 kpi=0.5,
-                product="exists",
-                subproduct="exists",
+                product="abc",
+                subproduct="def",
                 ))
         new_project = json.dumps(new_project)
 
@@ -1679,8 +1679,8 @@ class TestProjectAPI(TestAPI):
             info=dict(
                 data_access=project_levels, 
                 project_users=project_users,
-                product="exists",
-                subproduct="exists",
+                product="abc",
+                subproduct="def",
                 )
             )
         new_project = json.dumps(new_project)
@@ -1755,15 +1755,11 @@ class TestProjectAPI(TestAPI):
         data = json.loads(res.data)
         assert len(data) == 4, data
 
-
     @with_context
-    def test_project_post_with_requirements(self):
-        """Test project creation via API with field requirements works"""
-        user = UserFactory.create()
-        cat1 = CategoryFactory.create()
-        cat2 = CategoryFactory.create()
-
+    def test_project_post_without_password_fails(self):
+        """Test project creation via API without password fails"""
         # test create without password should fail
+        user = UserFactory.create()
         headers = [('Authorization', user.api_key)]
         data = dict(
             name="nopassword",
@@ -1781,25 +1777,10 @@ class TestProjectAPI(TestAPI):
         assert err['exception_cls'] == "BadRequest", err_msg
         assert res.status_code == 400, err_msg
 
-        # test create without description and long description should fail
-        headers = [('Authorization', user.api_key)]
-        data = dict(
-            name="nopassword",
-            short_name="nopassword",
-            password="exists",
-            info=dict(
-                data_classification=dict(input_data="L4 - public", output_data="L4 - public")
-            ))
-        res = self.app.post('/api/project', headers=headers,
-                            data=json.dumps(data))
-        err = json.loads(res.data)
-        err_msg = "description or long description required"
-        assert err['action'] == 'POST', err_msg
-        assert err['status'] == 'failed', err_msg
-        assert err['exception_cls'] == "BadRequest", err_msg
-        assert res.status_code == 400, err_msg
-
+    @with_context
+    def test_project_post_desc_from_long_desc(self):
         # test create without desc should populate from long_desc
+        user = UserFactory.create()
         headers = [('Authorization', user.api_key)]
         data = dict(
             name="longdesctest",
@@ -1809,39 +1790,20 @@ class TestProjectAPI(TestAPI):
             info=dict(
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
                 kpi=1,
-                product="exists",
-                subproduct="exists"
+                product="abc",
+                subproduct="def"
             ))
         res = self.app.post('/api/project', headers=headers,
                             data=json.dumps(data))
         res_data = json.loads(res.data)
         assert res.status_code == 200
-        print(res_data)
+        
         # password is removed
         assert "password" not in res_data
         # check description was formatted
         assert len(res_data["description"]) == 255
         assert res_data["description"][-3:] == "..."
         assert res_data["description"].startswith("a")
-
-        # test create without kpi should fail
-        headers = [('Authorization', user.api_key)]
-        data = dict(
-            name="kpitest",
-            short_name="kpitest",
-            long_description="kpitest",
-            password="exists",
-            info=dict(
-                data_classification=dict(input_data="L4 - public", output_data="L4 - public")
-            ))
-        res = self.app.post('/api/project', headers=headers,
-                            data=json.dumps(data))
-        err = json.loads(res.data)
-        err_msg = "KPI required"
-        assert err['action'] == 'POST', err_msg
-        assert err['status'] == 'failed', err_msg
-        assert err['exception_cls'] == "BadRequest", err_msg
-        assert res.status_code == 400, err_msg
 
         # test create kpi out of range
         headers = [('Authorization', user.api_key)]
@@ -1893,7 +1855,7 @@ class TestProjectAPI(TestAPI):
             info=dict(
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
                 kpi=50,
-                product="exists"
+                product="abc"
             ))
         res = self.app.post('/api/project', headers=headers,
                             data=json.dumps(data))

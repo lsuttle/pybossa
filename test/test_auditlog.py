@@ -47,8 +47,8 @@ class TestAuditlogAPI(Test):
                 'password': 'hello',
                 'info': dict(
                     kpi=0.5,
-                    product="exists",
-                    subproduct="exists",
+                    product="abc",
+                    subproduct="def",
                     data_classification=dict(input_data="L4 - public", output_data="L4 - public", kpi=0.5)
                     ),
                 'zip_download': True
