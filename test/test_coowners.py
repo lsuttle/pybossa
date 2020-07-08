@@ -226,8 +226,8 @@ class TestCoowners(web.Helper):
             'passwd_hash': 'hello', 
             'data_classification': dict(input_data="L4 - public", output_data="L4 - public"), 
             'kpi': 0.5,
-            'product': 'exists',
-            'subproduct': 'exists'
+            'product': 'abc',
+            'subproduct': 'def'
             })
         project.owner_id = 1
         project_repo.save(project)

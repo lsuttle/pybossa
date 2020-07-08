@@ -1195,3 +1195,4 @@ def description_from_long_description(desc, long_desc):
         text_desc += "..."
     description = blank_space_regex.sub(" ", text_desc)
     return description if description else " "
+    
