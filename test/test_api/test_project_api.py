@@ -710,49 +710,41 @@ class TestProjectAPI(TestAPI):
         users = UserFactory.create_batch(2)
         make_subadmin(users[1])
         non_owner = UserFactory.create()
-
         cat1 = CategoryFactory.create()
-        cat2 = CategoryFactory.create()
         
         # create project
         headers = [('Authorization', users[1].api_key)]
-        name='XXXX Project2'
+        name='project'
         new_project = dict(
             name=name,
-            short_name='xxxx-project2',
-            description='description2',
+            short_name='project',
+            description='description',
             owner_id=1,
-            long_description=u'Long Description\n================',
+            long_description='Long Description',
             password="hello",
             info=dict(
                 task_presenter='taskpresenter',
                 data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
                 kpi=0.5,
                 product="abc",
-                subproduct="def",
+                subproduct="def"
             ))
-        new_project = json.dumps(new_project)
 
         res = self.app.post('/api/project', headers=headers,
-                            data=new_project)
+                            data=json.dumps(new_project))
         out = project_repo.get_by(name=name)
-        assert out, out
-        assert_equal(out.short_name, 'xxxx-project2'), out
-        assert_equal(out.owner.name, 'user2')
-        # Test that a default category is assigned to the project
-        assert cat1.id == out.category_id, "No category assigned to project"
         id_ = out.id
 
         # test delete
         data = dict(
             name=name,
-            short_name='xxxx-project',
-            long_description=u'Long Description\n================',
+            short_name='project',
+            long_description=u'Long Description',
             password="hello")
 
         datajson = json.dumps(data)
         ## anonymous
-        res = self.app.delete('/api/project/%s' % id_, data=data)
+        res = self.app.delete('/api/project/%s' % id_, data=datajson)
         error_msg = 'Anonymous should not be allowed to delete'
         assert_equal(res.status, '401 UNAUTHORIZED', error_msg)
         error = json.loads(res.data)
@@ -789,7 +781,6 @@ class TestProjectAPI(TestAPI):
         url = '/api/project/?api_key=%s' % users[1].api_key
         res = self.app.delete(url, data=datajson)
         assert res.status_code == 404, error
-
 
 
     @with_context
