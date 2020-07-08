@@ -236,6 +236,27 @@ class TestProjectRepositoryForProjects(Test):
 
 
     @with_context
+    def test_save_fails_if_invalid_kpi(self):
+        """Test save raises a BadRequest if project kpi is invalid"""
+        project = ProjectFactory.build(name="exists", short_name="exists", description="exists")
+        project.info["kpi"] = ''
+        project.set_password('hello')
+
+        # fail if not value
+        with assert_raises(BadRequest) as err:
+            self.project_repo.save(project)
+        assert err.exception.description == "KPI must be value between 0.1 and 120"
+
+        project.info["kpi"] = 121
+        project.set_password('hello')
+
+        # fail if out of range
+        with assert_raises(BadRequest) as err:
+            self.project_repo.save(project)
+        assert err.exception.description == "KPI must be value between 0.1 and 120"
+
+
+    @with_context
     def test_save_fails_if_missing_product(self):
         """Test save raises a BadRequest if project has no product"""
         project = ProjectFactory.build(name="exists", short_name="exists", description="exists")

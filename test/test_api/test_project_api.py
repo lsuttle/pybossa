@@ -80,17 +80,13 @@ class TestProjectAPI(TestAPI):
             info={
                 'total': 150,
                 'task_presenter': 'foo',
-                'data_classification': dict(input_data="L4 - public", output_data="L4 - public"),
-                'product': 'abc',
-                'subproduct': 'def'
+                'data_classification': dict(input_data="L4 - public", output_data="L4 - public")
             })
         projects = ProjectFactory.create_batch(8,
             info={
                 'total': 150,
                 'task_presenter': 'foo',
-                'data_classification': dict(input_data="L4 - public", output_data="L4 - public"),
-                'product': 'abc',
-                'subproduct': 'def'
+                'data_classification': dict(input_data="L4 - public", output_data="L4 - public")
             })
 
         project2 = ProjectFactory.create(
@@ -98,9 +94,7 @@ class TestProjectAPI(TestAPI):
             info={
                 'total': 150,
                 'task_presenter': 'foo',
-                'data_classification': dict(input_data="L4 - public", output_data="L4 - public"),
-                'product': 'abc',
-                'subproduct': 'def'
+                'data_classification': dict(input_data="L4 - public", output_data="L4 - public")
             })
         user = UserFactory.create()
 
@@ -210,7 +204,7 @@ class TestProjectAPI(TestAPI):
             owner=user,
             info={
                 'total': 150,
-                'data_classification': dict(input_data="L4 - public", output_data="L4 - public"),
+                'data_classification': dict(input_data="L4 - public", output_data="L4 - public")
             })
         ProjectFactory.create()
         res = self.app.get('/api/project?api_key=' + user.api_key)
@@ -322,7 +316,7 @@ class TestProjectAPI(TestAPI):
                                            name='My New Project',
                                            info=dict(
                                                foo='fox',
-                                               data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
+                                               data_classification=dict(input_data="L4 - public", output_data="L4 - public")
                                             ))
         ProjectFactory.create()
         # Test for real field
@@ -1714,8 +1708,7 @@ class TestProjectAPI(TestAPI):
         # project = ProjectFactory.create(owner=owner, info=dict(data_access=["L1", "L2"]))
         project = ProjectFactory.create(
             owner=owner,
-            info=dict(
-                data_classification=dict(input_data="L3 - community", output_data="L3 - community")
+            info=dict(data_classification=dict(input_data="L3 - community", output_data="L3 - community")
         ))
 
         self.set_proj_passwd_cookie(project, user_l3)
@@ -1758,7 +1751,6 @@ class TestProjectAPI(TestAPI):
     @with_context
     def test_project_post_without_password_fails(self):
         """Test project creation via API without password fails"""
-        # test create without password should fail
         user = UserFactory.create()
         headers = [('Authorization', user.api_key)]
         data = dict(
@@ -1779,9 +1771,9 @@ class TestProjectAPI(TestAPI):
 
     @with_context
     def test_project_post_desc_from_long_desc(self):
-        # test create without desc should populate from long_desc
         user = UserFactory.create()
         headers = [('Authorization', user.api_key)]
+        CategoryFactory.create()
         data = dict(
             name="longdesctest",
             short_name="longdesctest",
@@ -1797,7 +1789,7 @@ class TestProjectAPI(TestAPI):
                             data=json.dumps(data))
         res_data = json.loads(res.data)
         assert res.status_code == 200
-        
+
         # password is removed
         assert "password" not in res_data
         # check description was formatted
@@ -1824,46 +1816,3 @@ class TestProjectAPI(TestAPI):
         assert err['status'] == 'failed', err_msg
         assert err['exception_cls'] == "BadRequest", err_msg
         assert res.status_code == 400, err_msg
-
-        # test create without product should fail
-        headers = [('Authorization', user.api_key)]
-        data = dict(
-            name="kpitest",
-            short_name="kpitest",
-            long_description="kpitest",
-            password="exists",
-            info=dict(
-                data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
-                kpi=50,
-            ))
-        res = self.app.post('/api/project', headers=headers,
-                            data=json.dumps(data))
-        err = json.loads(res.data)
-        err_msg = "Product required"
-        assert err['action'] == 'POST', err_msg
-        assert err['status'] == 'failed', err_msg
-        assert err['exception_cls'] == "BadRequest", err_msg
-        assert res.status_code == 400, err_msg
-
-        # test create without subproduct should fail
-        headers = [('Authorization', user.api_key)]
-        data = dict(
-            name="kpitest",
-            short_name="kpitest",
-            long_description="kpitest",
-            password="exists",
-            info=dict(
-                data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
-                kpi=50,
-                product="abc"
-            ))
-        res = self.app.post('/api/project', headers=headers,
-                            data=json.dumps(data))
-        err = json.loads(res.data)
-        err_msg = "Product required"
-        assert err['action'] == 'POST', err_msg
-        assert err['status'] == 'failed', err_msg
-        assert err['exception_cls'] == "BadRequest", err_msg
-        assert res.status_code == 400, err_msg
-        
-
