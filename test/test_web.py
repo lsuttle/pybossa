@@ -8126,6 +8126,8 @@ class TestWeb(web.Helper):
         self.create()
         project = db.session.query(Project).get(1)
         project.info["kpi"] = 0.5
+        project.info["product"] = "exists"
+        project.info["subproduct"] = "exists"
         project.set_password('hello')
 
         order_by = u'n_volunteers'

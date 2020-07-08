@@ -46,7 +46,9 @@ class TestAuditlogAPI(Test):
                 'allow_anonymous_contributors': False,
                 'password': 'hello',
                 'info': dict(
-                    kpi=0.5, 
+                    kpi=0.5,
+                    product="exists",
+                    subproduct="exists",
                     data_classification=dict(input_data="L4 - public", output_data="L4 - public", kpi=0.5)
                     ),
                 'zip_download': True

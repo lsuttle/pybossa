@@ -33,6 +33,10 @@ class ProjectFactory(BaseFactory):
             project.info['data_classification'] = dict(input_data="L4 - public", output_data="L4 - public")
         if 'kpi' not in project.info:
             project.info['kpi'] = 0.5
+        if 'product' not in project.info:
+            project.info['product'] = 'exists'
+        if 'subproduct' not in project.info:
+            project.info['subproduct'] = 'exists'
         project_repo.save(project)
         return project
 
