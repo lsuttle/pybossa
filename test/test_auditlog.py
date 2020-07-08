@@ -45,7 +45,7 @@ class TestAuditlogAPI(Test):
                 'long_description': 'new_long_description',
                 'allow_anonymous_contributors': False,
                 'password': 'hello',
-                'info': dict(data_classification=dict(input_data="L4 - public", output_data="L4 - public")),
+                'info': dict(data_classification=dict(input_data="L4 - public", output_data="L4 - public", kpi=0.5)),
                 'zip_download': True
                 }
         url = '/api/project?api_key=%s' % (user.api_key)

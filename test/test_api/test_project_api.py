@@ -80,15 +80,13 @@ class TestProjectAPI(TestAPI):
             info={
                 'total': 150,
                 'task_presenter': 'foo',
-                'data_classification': dict(input_data="L4 - public", output_data="L4 - public"),
-                'kpi': 0.5
+                'data_classification': dict(input_data="L4 - public", output_data="L4 - public")
             })
         projects = ProjectFactory.create_batch(8,
             info={
                 'total': 150,
                 'task_presenter': 'foo',
-                'data_classification': dict(input_data="L4 - public", output_data="L4 - public"),
-                'kpi': 0.5
+                'data_classification': dict(input_data="L4 - public", output_data="L4 - public")
             })
 
         project2 = ProjectFactory.create(
@@ -96,8 +94,7 @@ class TestProjectAPI(TestAPI):
             info={
                 'total': 150,
                 'task_presenter': 'foo',
-                'data_classification': dict(input_data="L4 - public", output_data="L4 - public"),
-                'kpi': 0.5
+                'data_classification': dict(input_data="L4 - public", output_data="L4 - public")
             })
         user = UserFactory.create()
 
@@ -207,8 +204,7 @@ class TestProjectAPI(TestAPI):
             owner=user,
             info={
                 'total': 150,
-                'data_classification': dict(input_data="L4 - public", output_data="L4 - public"),
-                'kpi': 0.5
+                'data_classification': dict(input_data="L4 - public", output_data="L4 - public")
             })
         ProjectFactory.create()
         res = self.app.get('/api/project?api_key=' + user.api_key)
@@ -320,7 +316,6 @@ class TestProjectAPI(TestAPI):
                                            name='My New Project',
                                            info=dict(
                                                foo='fox',
-                                               kpi=0.5,
                                                data_classification=dict(input_data="L4 - public", output_data="L4 - public")
                                             ))
         ProjectFactory.create()
@@ -1665,9 +1660,7 @@ class TestProjectAPI(TestAPI):
         project = ProjectFactory.create(
             owner=owner,
             info=dict(
-                data_classification=dict(input_data="L3 - community", output_data="L3 - community"), 
-                kpi=0.5
-
+                data_classification=dict(input_data="L3 - community", output_data="L3 - community")
         ))
 
         self.set_proj_passwd_cookie(project, user_l3)
@@ -1789,7 +1782,7 @@ class TestProjectAPI(TestAPI):
         res = self.app.post('/api/project', headers=headers,
                             data=json.dumps(data))
         err = json.loads(res.data)
-        err_msg = "KPI must be integer between 0.1 and 120"
+        err_msg = "KPI must be value between 0.1 and 120"
         assert err['action'] == 'POST', err_msg
         assert err['status'] == 'failed', err_msg
         assert err['exception_cls'] == "BadRequest", err_msg
