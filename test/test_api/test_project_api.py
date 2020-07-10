@@ -1771,7 +1771,7 @@ class TestProjectAPI(TestAPI):
             long_description="<HTMLTAG>" + ("a" * 300),
             password="exists",
             info=dict(
-                data_classification=dict(input_data="L4 - public", output_data="L4 - public"),
+                data_classification=dict(input_data="L3 - community", output_data="L4 - public"),
                 kpi=1,
                 product="abc",
                 subproduct="def"
@@ -1788,7 +1788,7 @@ class TestProjectAPI(TestAPI):
         assert res_data["description"][-3:] == "..."
         assert res_data["description"].startswith("a")
         # check that data access was set appropriately
-        assert res_data["info"]["data_access"] == ["L4"]
+        assert res_data["info"]["data_access"] == ["L3"]
 
     @with_context
     def test_project_post_kpi_out_of_range(self):

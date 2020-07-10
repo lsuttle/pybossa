@@ -74,8 +74,8 @@ class ProjectAPI(APIBase):
         inst = super(ProjectAPI, self)._create_instance_from_request(data)
         inst.set_password(password)
         if not inst.info.get("data_access"):
-            # set to most restrictive, will overwrite when saved
-            inst.info["data_access"] = ["L1"]
+            # set to least restrictive, will overwrite when saved
+            inst.info["data_access"] = ["L4"]
         category_ids = [c.id for c in get_categories()]
         default_category = get_categories()[0]
         inst.category_id = default_category.id
