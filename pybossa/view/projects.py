@@ -1737,7 +1737,8 @@ def delete_selected_tasks(short_name):
                     'project_id': project.id, 'project_name': project.name,
                     'curr_user': current_user.email_addr, 'force_reset': True,
                     'coowners': owners, 'filters': args,
-                    'current_user_fullname': current_user.fullname}
+                    'current_user_fullname': current_user.fullname,
+                    'url': current_app.config.get('SERVER_URL')}
                 task_queue.enqueue(delete_bulk_tasks, data)
             else:
                 task_repo.delete_valid_from_project(project, True, args)
