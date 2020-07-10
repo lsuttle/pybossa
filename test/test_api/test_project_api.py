@@ -1787,7 +1787,13 @@ class TestProjectAPI(TestAPI):
         assert len(res_data["description"]) == 255
         assert res_data["description"][-3:] == "..."
         assert res_data["description"].startswith("a")
+        # check that data access was set appropriately
+        assert res_data["info"]["data_access"] == ["L4"]
 
+    @with_context
+    def test_project_post_kpi_out_of_range(self):
+        user = UserFactory.create()
+        CategoryFactory.create()
         # test create kpi out of range
         headers = [('Authorization', user.api_key)]
         data = dict(
@@ -1802,6 +1808,7 @@ class TestProjectAPI(TestAPI):
         res = self.app.post('/api/project', headers=headers,
                             data=json.dumps(data))
         err = json.loads(res.data)
+        print(err)
         err_msg = "KPI must be value between 0.1 and 120"
         assert err['action'] == 'POST', err_msg
         assert err['status'] == 'failed', err_msg

@@ -26,7 +26,6 @@ from pybossa.model.category import Category
 from pybossa.exc import WrongObjectError, DBIntegrityError
 from pybossa.cache import projects as cached_projects
 from pybossa.core import uploader
-from pybossa.data_access import ensure_user_assignment_to_project
 from werkzeug.exceptions import BadRequest
 import pandas.io.sql as sqlio
 import pandas as pd
@@ -61,7 +60,6 @@ class ProjectRepository(Repository):
         self._creator_is_owner(project)
         self._verify_has_password(project)
         self._verify_data_classification(project)
-        ensure_user_assignment_to_project(project)
         self._verify_required_fields(project)
         self._verify_product_subproduct(project)
         try:
