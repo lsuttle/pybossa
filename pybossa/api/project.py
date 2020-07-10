@@ -32,7 +32,7 @@ from pybossa.cache.categories import get_all as get_categories
 from pybossa.util import is_reserved_name, description_from_long_description
 from pybossa.core import auditlog_repo, result_repo, http_signer
 from pybossa.auditlogger import AuditLogger
-from pybossa.data_access import ensure_user_assignment_to_project, set_default_amp_store
+from pybossa.data_access import set_default_amp_store
 
 auditlogger = AuditLogger(auditlog_repo, caller='api')
 
@@ -100,7 +100,6 @@ class ProjectAPI(APIBase):
         if project.short_name and is_reserved_name('project', project.short_name):
             msg = "Project short_name is not valid, as it's used by the system."
             raise ValueError(msg)
-        ensure_user_assignment_to_project(project)
 
     def _log_changes(self, old_project, new_project):
         auditlogger.add_log_entry(old_project, new_project, current_user)
