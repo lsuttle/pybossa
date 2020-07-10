@@ -68,8 +68,7 @@ class ProjectAPI(APIBase):
             data["description"] = description_from_long_description(desc, long_desc)
         # set default data_access
         if not data.get('info', {}).get("data_access"):
-            if not data.get("info"):
-                data["info"] = {}
+            data["info"] = data.get("info", {})
             # set to least restrictive, will overwrite when saved
             data["info"]["data_access"] = ["L4"]
 

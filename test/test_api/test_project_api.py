@@ -1808,7 +1808,6 @@ class TestProjectAPI(TestAPI):
         res = self.app.post('/api/project', headers=headers,
                             data=json.dumps(data))
         err = json.loads(res.data)
-        print(err)
         err_msg = "KPI must be value between 0.1 and 120"
         assert err['action'] == 'POST', err_msg
         assert err['status'] == 'failed', err_msg
