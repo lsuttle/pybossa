@@ -26,8 +26,9 @@ task_repo = TaskRepository(db)
 class TestDeleteTasks(Test):
 
     @with_context
+    @patch('pyboss.core.db')
     @patch('pybossa.jobs.send_mail')
-    def test_delete_bulk_tasks(self, send_mail):
+    def test_delete_bulk_tasks(self, mock_send_mail, mock_db):
         """Test delete_bulk_tasks deletes tasks and sends email"""
         user = UserFactory.create(admin=True)
         project = ProjectFactory.create(name='test_project')
@@ -47,7 +48,7 @@ class TestDeleteTasks(Test):
                          "deleted from project {0} on {1} as requested by {2}\n\nThe {3} team."
                          .format(project.name, None, user.fullname, flask_app.config.get("BRAND")))
         expected = dict(recipients=[user.email_addr], subject=expected_subject, body=expected_body)
-        send_mail.assert_called_once_with(expected)
+        mock_send_mail.assert_called_once_with(expected)
 
         tasks = task_repo.filter_tasks_by(project_id=project.id)
         assert len(tasks) == 0
