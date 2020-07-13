@@ -64,7 +64,7 @@ class TestProjectDeleteTasks(web.Helper):
         assert len(tasks) == 0
 
     @with_context
-    def test_delete_tasks(self):
+    def test_delete_tasks_bulk(self):
         """Test that request to delete large number of tasks results in job being queued"""
         project = project_repo.get(self.project_id)
 
