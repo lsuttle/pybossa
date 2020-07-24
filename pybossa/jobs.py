@@ -550,10 +550,9 @@ def disable_users_job():
     ext_user_domains = current_app.config.get('EXTENDED_STALE_USERS_DOMAINS') or []
 
     if ext_user_domains:
+        # never disable extended users
         ext_users_filter = ' OR '.join('(u.email_addr LIKE \'%{}\')'.format(domain) for domain in ext_user_domains)
-        where = '''((u.inactivity > interval '{} month') AND NOT ({})) OR
-                   ((u.inactivity > interval '{} month') AND ({}))'''.format(user_interval, ext_users_filter,
-                                                                             ext_user_interval, ext_users_filter)
+        where = '''((u.inactivity > interval '{} month') AND NOT ({}))'''.format(user_interval, ext_users_filter)
     else:
         where = 'u.inactivity > interval \'{} month\''.format(user_interval)
 
