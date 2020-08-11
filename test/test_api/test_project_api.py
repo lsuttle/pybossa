@@ -1821,7 +1821,7 @@ class TestProjectAPI(TestAPI):
         # test create kpi out of range
         headers = [('Authorization', user.api_key)]
         data = dict(
-            name=name,
+            name='my-project',
             short_name='my-project',
             description='my-project-description',
             info=dict(
