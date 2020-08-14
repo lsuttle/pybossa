@@ -74,7 +74,10 @@ class ProjectAPI(APIBase):
 
     def _create_instance_from_request(self, data):
         # password required if not syncing
-        sync = "sync" in data["info"]
+        sync_json = data["info"].get("sync", {})
+        # keys added when syncing
+        sync_keys = ("latest_sync", "source_url", "syncer")
+        sync = all(sync_key in sync_json for sync_key in sync_keys)
         password = data.pop("password", "")
         if not (sync or password) or (sync and "passwd_hash" not in data["info"]):
             raise BadRequest("password required")
