@@ -370,6 +370,6 @@ class ProjectRepository(Repository):
             'project_id', 'name', 'url', 'short_name', 'long_description', 'created', 'owner_name',
             'owner_email', 'category_name', 'finish_time', 'percent_complete', 'n_tasks', 'n_pending_tasks',
             'n_workers', 'workers', 'updated', 'last_submission', 'n_taskruns', 'n_pending_taskruns',
-            'kpi', 'project', 'subproduct', 'input_data_classification', 'output_data_classification',
+            'kpi', 'product', 'subproduct', 'input_data_classification', 'output_data_classification',
             'data_access']]
         return data
